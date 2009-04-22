@@ -1,0 +1,5 @@
+# Build thread test
+env = Environment()
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.Append(LIBS = 'pthread')
+env.Program('thread.cpp')

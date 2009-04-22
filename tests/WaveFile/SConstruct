@@ -1,0 +1,8 @@
+# Build WaveFile test
+env = Environment()
+env.ParseConfig('pkg-config glibmm-2.4 --silence-errors --cflags --libs')
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.Append(CXXFLAGS = ['-I../../../../src/plugins/AudioDevices'])
+env.Append(LIBS = ['sndfile'])
+env.Program("wave_file", ["wave_file.cpp", "../../../../src/plugins/AudioDevices/WaveFile.cpp"])
+env.Program("flac_file", ["flac_file.cpp", "../../../../src/plugins/AudioDevices/WaveFile.cpp"])

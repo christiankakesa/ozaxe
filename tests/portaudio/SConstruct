@@ -1,0 +1,4 @@
+# Build portaudio test
+env = Environment()
+env.Append(LIBS = ['portaudio'])
+env.Program('portaudio.cpp')

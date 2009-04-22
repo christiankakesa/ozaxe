@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
+<!--Generated with glade3 3.4.2 on Tue May 13 02:31:17 2008 -->
+<glade-interface>
+  <widget class="GtkWindow" id="mainframe">
+    <property name="visible">True</property>
+    <property name="tooltip" translatable="yes" comments="Ozaxe title and version.">OZAXE</property>
+    <property name="title" translatable="yes" comments="OZAXE title">OZAXE</property>
+    <property name="modal">True</property>
+    <property name="icon">images/ozaxeico.png</property>
+    <property name="icon_name">ozaxeico</property>
+    <property name="urgency_hint">True</property>
+    <property name="decorated">True</property>
+    <property name="opacity">0.95</property>
+    <property name="resizable">False</property>
+    <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
+    <accelerator key="O" modifiers="GDK_SHIFT_MASK" signal="activate-default"/>
+    <child>
+      <widget class="GtkVBox" id="layout">
+        <property name="visible">True</property>
+        <child>
+          <widget class="GtkToolButton" id="voiceBTN">
+            <property name="visible">True</property>
+            <property name="tooltip" translatable="yes">Reconnaissance vocale</property>
+            <property name="visible_horizontal">False</property>
+            <property name="label" translatable="yes">Commandes vocales</property>
+            <property name="icon">images/mainframe/voice.png</property>
+          </widget>
+        </child>
+        <child>
+          <widget class="GtkToolButton" id="synthesisBTN">
+            <property name="visible">True</property>
+            <property name="tooltip" translatable="yes">Synhtèse vocale</property>
+            <property name="visible_horizontal">False</property>
+            <property name="label" translatable="yes">Lire texte</property>
+            <property name="icon">images/mainframe/text.png</property>
+          </widget>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkToolButton" id="prefsBTN">
+            <property name="visible">True</property>
+            <property name="has_tooltip">True</property>
+            <property name="tooltip" translatable="yes">Préférences</property>
+            <property name="visible_horizontal">False</property>
+            <property name="label" translatable="yes">Préférences</property>
+            <property name="icon">images/mainframe/prefs.png</property>
+          </widget>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkToolButton" id="infoBTN">
+            <property name="visible">True</property>
+            <property name="tooltip" translatable="yes">Aide</property>
+            <property name="visible_horizontal">False</property>
+            <property name="label" translatable="yes">Aide</property>
+            <property name="icon">images/mainframe/info.png</property>
+          </widget>
+          <packing>
+            <property name="position">3</property>
+          </packing>
+        </child>
+	<child>
+          <widget class="GtkToolButton" id="exitBTN">
+            <property name="visible">True</property>
+            <property name="tooltip" translatable="yes">Quitter</property>
+            <property name="visible_horizontal">False</property>
+            <property name="label" translatable="yes">Quitter</property>
+            <property name="icon">images/mainframe/exit.png</property>
+          </widget>
+          <packing>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</glade-interface>

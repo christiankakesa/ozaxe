@@ -1,0 +1,3 @@
+# Test file
+env = Environment()
+env.Program(target = "test", source = ["test.cpp"])

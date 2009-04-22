@@ -1,0 +1,12 @@
+# Build xosd test
+env = Environment()
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.Append(LIBS = 'xosd')
+env_osd = env.Clone()
+env_osd.Program('osd.cpp')
+
+env.ParseConfig('pkg-config ozaxelib --silence-errors --cflags --libs')
+env.Append(CXXFLAGS = ['-I../../../../src/plugins/MessageServices'])
+env.Append(LIBPATH = '-L./plugins')
+env.Append(LIBS = '-lozaxeplugin_messageservices')
+env.Program('test.cpp')

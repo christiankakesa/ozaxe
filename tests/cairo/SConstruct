@@ -1,0 +1,11 @@
+# Build cairo test
+#g++ rno.cpp -o rno -I/usr/X11R6/include -I/usr/local/include -L/usr/X11/lib -L/usr/local/lib -lX11 -lXext -lpng `pkg-config --cflags --libs cairo`
+env = Environment()
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.ParseConfig('pkg-config x11 --libs')
+env.ParseConfig('pkg-config cairo --cflags --libs')
+env.ParseConfig('pkg-config imlib --cflags --libs')
+env.Program('cairo.cpp')
+env.Program('rno.cpp')
+env.Program('test.cpp')
+env.Program('transparent.cpp')

@@ -1,0 +1,16 @@
+INSTALLATION
+------------
+To install this project just type (not yet ended) :
+>[1]$ scons
+>[2]$ cd build
+>[3]$ sh ozaxe.sh
+Have fun !!!
+
+DEPENDS
+-------
+glibmm-2.4
+libsndfile
+portaudio V1.9
+gcc
+g++
+xosd (unix only)

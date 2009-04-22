@@ -1,0 +1,8 @@
+# Build play_wav and rec_wav
+env = Environment()
+env.ParseConfig('pkg-config ozaxelib --silence-errors --cflags --libs')
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.Append(CXXFLAGS = ['-I../../../src/plugins/AudioDevices', '-D__OZAXE_DEBUG__'])
+env.Append(LIBS = ['-lportaudio', '-lsndfile'])
+env.Program("play_wav", ["play_wav.cpp"])
+env.Program("rec_wav", ["rec_wav.cpp"])

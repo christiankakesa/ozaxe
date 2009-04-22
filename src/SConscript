@@ -1,0 +1,127 @@
+import os
+import sys
+
+###### MAIN LINE ######
+#######################
+#Get the platform/OS that we're building on:
+if os.name == 'nt':
+	print 'Platform: Windows'
+	platform = 'win32'
+elif sys.platform == 'linux2':
+	print 'Platform: Linux'
+	platform = 'linux'
+elif sys.platform == 'darwin':
+	print 'Platform: OS X'
+	platform = 'osx'
+else:
+	print 'Platform: Unknown (assuming Linux-like)'
+	platform = 'linux'
+
+env = Environment()
+## Global cache directory
+## Put all project files in it so a rm -rf cache will clean up the config
+if not env.has_key('CACHEDIR'):
+  env['CACHEDIR'] =os.getcwd()+ '/../cache/'
+if not os.path.isdir(env['CACHEDIR']):
+  os.mkdir(env['CACHEDIR'])
+
+#Build OzaxeCoreApplication
+cachefile = env['CACHEDIR'] + 'custom.py'
+opts = Options(cachefile)
+opts.Add('debug', 'Set to 1 to build for debug symboles', 0)
+opts.Update(env)
+Help(opts.GenerateHelpText(env))
+
+conf = Configure(env)
+
+env.Append(CCFLAGS = ['-ansi', '-pedantic', '-W', '-Wall'])
+#OPTIONS
+debug = ARGUMENTS.get('debug', 0)
+if int(debug):
+	env.Append(CCFLAGS = '-g')
+	env.Append(CXXFLAGS = '-D__DEBUG__ -DDEBUG -D_DEBUG')
+
+#Check of the required libraries
+if not conf.CheckLib('glibmm-2.4'):
+	print 'Did not find libglibmm-2.4.a or glibmm-2.4.lib, exiting!'
+	Exit(1)
+
+if platform == 'linux':
+	env.Append(CXXFLAGS = '-D__LINUX__ -DLINUX -D_LINUX -D__UNIX__ -DUNIX -D_UNIX')
+	env.ParseConfig('pkg-config glibmm-2.4 --silence-errors --cflags --libs')
+elif platform == "win32":
+	env.Append(CXXFLAGS = '-D__WIN32__ -DWIN32 -DUNICODE -D_WINDOWS')
+elif platform == "osx":
+	env.Append(CXXFLAGS = '-D__MACX__ -DMACX -D_MACX')
+
+env_ozaxe = env.Clone()
+env.Append(SHLINKFLAGS = ['-Wl,-export-dynamic', '-Wl,-E', '-Wl,-rpath,.'])
+env_audio = env.Clone()
+env_msg = env.Clone()
+
+
+env_audio.Append(LIBS = ['portaudio', 'sndfile'])
+if platform == 'linux':	
+	env_msg.Append(LIBS = ['xosd'])
+	env_msg.ParseConfig('pkg-config gthread-2.0 --silence-errors --cflags --libs')
+	#env_ozaxe.ParseConfig('pkg-config ozaxelib --silence-errors --cflags --libs')
+	env_ozaxe.ParseConfig('pkg-config gthread-2.0 --silence-errors --cflags --libs')
+	env_ozaxe.ParseConfig('pkg-config gtkmm-2.4 --silence-errors --cflags --libs')
+	env_ozaxe.ParseConfig('pkg-config libglademm-2.4 --silence-errors --cflags --libs')
+	
+env = conf.Finish()
+
+#Build AudioDevices library
+audiodevices_files = Split('plugins/AudioDevices/AudioDevices.cpp plugins/AudioDevices/WaveFile.cpp')
+lib_audiodevices = env_audio.SharedLibrary(target = "../build/plugins/ozaxeplugin_audiodevices", source = audiodevices_files, SHLIBSUFFIX = '.plg')
+
+#Build MessageServices library
+messageservices_files = Split('plugins/MessageServices/MessageServices.cpp')
+if platform == 'win32':
+	messageservices_files += Split('plugins/MessageServices/WinOSD.cpp')
+lib_messageservices = env_msg.SharedLibrary(target = "../build/plugins/ozaxeplugin_messageservices", source = messageservices_files, SHLIBSUFFIX = '.plg')
+
+#Build OZAXE binary
+ozaxe_files = Split('ozaxe.cpp MainFrame.cpp SynthesisFrame.cpp PrefsFrame.cpp Plugins.cpp MessageProcessing.cpp Config.cpp Utils.cpp Library.cpp')
+ozaxe_program = env_ozaxe.Program('../build/ozaxe', ozaxe_files)
+Command("../build/ozaxe.sh", "ozaxe.sh", Copy("$TARGET", "$SOURCE"))
+
+Command("../build/data/licenses/gpl-3.0.txt", "data/licenses/gpl-3.0.txt", Copy("$TARGET", "$SOURCE"))
+
+Command("../build/images/ozaxe.png", "images/ozaxe.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/images/ozaxeico.png", "images/ozaxeico.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/images/ozaxe_splash.png", "images/ozaxe_splash.png", Copy("$TARGET", "$SOURCE"))
+
+Command("../build/ui/mainframe.glade", "mainframe.glade", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/prefsframe.glade", "prefsframe.glade", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/synthesisframe.glade", "synthesisframe.glade", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/ozaxe.png", "images/ozaxe.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/ozaxeico.png", "images/ozaxeico.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/mainframe/voice.png", "images/mainframe/voice.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/mainframe/text.png", "images/mainframe/text.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/mainframe/prefs.png", "images/mainframe/prefs.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/mainframe/info.png", "images/mainframe/info.png", Copy("$TARGET", "$SOURCE"))
+Command("../build/ui/images/mainframe/exit.png", "images/mainframe/exit.png", Copy("$TARGET", "$SOURCE"))
+
+Command("../build/speak/linux/speak", "speak/linux/speak", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/ozaxe_tts.sh", "speak/linux/ozaxe_tts.sh", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/mbrola", "speak/linux/mbrola", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr1", "speak/linux/voices/mb/fr1", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr2", "speak/linux/voices/mb/fr2", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr3", "speak/linux/voices/mb/fr3", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr4", "speak/linux/voices/mb/fr4", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr5", "speak/linux/voices/mb/fr5", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr6", "speak/linux/voices/mb/fr6", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/linux/voices/mb/fr7", "speak/linux/voices/mb/fr7", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/windows/Readme.txt", "speak/windows/Readme.txt", Copy("$TARGET", "$SOURCE"))
+Command("../build/speak/windows/setup_espeak.exe", "speak/windows/setup_espeak.exe", Copy("$TARGET", "$SOURCE"))
+
+#Install the libraries
+#if platform == 'linux':
+	#libs_audiodevices = env_audio.Install('/usr/local/lib', lib_audiodevices)
+	#libs_messageservices = env_msg.Install('/usr/local/lib', lib_messageservices)
+	#ozaxe = env_ozaxe.Install('/usr/local/bin', ozaxe_program)
+	#env_audio.Alias('install', libs_audiodevices)
+	#env_msg.Alias('install', libs_messageservices)
+	#env_ozaxe.Alias('install', ozaxe)
+

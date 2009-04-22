@@ -1,0 +1,5 @@
+# Build play_wav and rec_wav
+env = Environment()
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.Append(LIBS = ['dl'])
+env.Program("dl.cpp")

@@ -1,0 +1,5 @@
+# Build map test
+env = Environment()
+env.Append(CCFLAGS = ['-O3', '-ansi', '-pedantic', '-W', '-Wall'])
+env.Program('map_test.cpp')
+
